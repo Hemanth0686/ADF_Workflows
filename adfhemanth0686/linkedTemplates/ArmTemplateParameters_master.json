@@ -1,0 +1,21 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "adfhemanth0686"
+		},
+		"ADLSGen2_LS_accountKey": {
+			"value": ""
+		},
+		"ADLSGen2_LS_properties_typeProperties_url": {
+			"value": "https://storagehemanth0011.dfs.core.windows.net/"
+		},
+		"containerUri": {
+			"value": ""
+		},
+		"containerSasToken": {
+			"value": ""
+		}
+	}
+}
