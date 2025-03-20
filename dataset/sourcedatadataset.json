@@ -1,5 +1,5 @@
 {
-	"name": "metadataset",
+	"name": "sourcedatadataset",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "ADLSGen2_LS",
@@ -10,6 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
+				"fileName": "education.csv",
 				"folderPath": "csvfiles",
 				"fileSystem": "input"
 			},
