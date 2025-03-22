@@ -1,5 +1,5 @@
 {
-	"name": "inputdataDataset",
+	"name": "foreachoutputdataset",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "ADLSGen2_LS",
@@ -19,8 +19,8 @@
 					"value": "@dataset().filename",
 					"type": "Expression"
 				},
-				"folderPath": "csvfiles",
-				"fileSystem": "input"
+				"folderPath": "destination",
+				"fileSystem": "output"
 			},
 			"columnDelimiter": ",",
 			"escapeChar": "\\",
