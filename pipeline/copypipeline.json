@@ -38,8 +38,22 @@
 							"fileExtension": ".txt"
 						}
 					},
-					"enableStaging": false
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
 				},
+				"inputs": [
+					{
+						"referenceName": "sourcedatadatasetGen2",
+						"type": "DatasetReference"
+					}
+				],
 				"outputs": [
 					{
 						"referenceName": "outputdataDataset",
@@ -68,6 +82,10 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
+					"dataset": {
+						"referenceName": "sourcedatadatasetGen2",
+						"type": "DatasetReference"
+					},
 					"logStorageSettings": {
 						"linkedServiceName": {
 							"referenceName": "ADLSGen2_LS",
