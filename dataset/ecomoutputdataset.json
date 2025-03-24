@@ -1,5 +1,5 @@
 {
-	"name": "sourcedatadataset",
+	"name": "ecomoutputdataset",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "ADLSGen2_LS",
@@ -10,20 +10,14 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "Online-eCommerce.csv",
-				"folderPath": "csvfiles",
-				"fileSystem": "input"
+				"folderPath": "destination",
+				"fileSystem": "output"
 			},
 			"columnDelimiter": ",",
 			"escapeChar": "\\",
 			"firstRowAsHeader": true,
 			"quoteChar": "\""
 		},
-		"schema": [
-			{
-				"name": "Comparison",
-				"type": "String"
-			}
-		]
+		"schema": []
 	}
 }
