@@ -8,6 +8,9 @@
 		"ADLSGen2_LS_accountKey": {
 			"value": ""
 		},
+		"AzureBlobStorage_connectionString": {
+			"value": ""
+		},
 		"ADLSGen2_LS_properties_typeProperties_url": {
 			"value": "https://storagehemanth0011.dfs.core.windows.net/"
 		},

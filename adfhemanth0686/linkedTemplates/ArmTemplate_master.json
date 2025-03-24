@@ -11,6 +11,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'ADLSGen2_LS'"
 		},
+		"AzureBlobStorage_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorage'"
+		},
 		"ADLSGen2_LS_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://storagehemanth0011.dfs.core.windows.net/"
@@ -44,6 +48,9 @@
 					},
 					"ADLSGen2_LS_accountKey": {
 						"value": "[parameters('ADLSGen2_LS_accountKey')]"
+					},
+					"AzureBlobStorage_connectionString": {
+						"value": "[parameters('AzureBlobStorage_connectionString')]"
 					},
 					"ADLSGen2_LS_properties_typeProperties_url": {
 						"value": "[parameters('ADLSGen2_LS_properties_typeProperties_url')]"
