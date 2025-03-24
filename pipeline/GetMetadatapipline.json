@@ -16,10 +16,6 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"dataset": {
-						"referenceName": "sourcedatadataset",
-						"type": "DatasetReference"
-					},
 					"fieldList": [
 						"childItems"
 					],
