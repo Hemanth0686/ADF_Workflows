@@ -110,13 +110,7 @@
 										"inputs": [
 											{
 												"referenceName": "inputdatsetforblob",
-												"type": "DatasetReference",
-												"parameters": {
-													"filename": {
-														"value": "@item().Name",
-														"type": "Expression"
-													}
-												}
+												"type": "DatasetReference"
 											}
 										],
 										"outputs": [
