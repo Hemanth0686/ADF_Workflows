@@ -1,5 +1,5 @@
 {
-	"name": "inputdatsetforblob",
+	"name": "csvdataset",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "AzureBlobStorage",
@@ -10,8 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "comparison.csv",
-				"container": "source"
+				"container": "destination"
 			},
 			"columnDelimiter": ",",
 			"escapeChar": "\\",

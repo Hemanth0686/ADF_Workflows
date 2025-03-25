@@ -24,6 +24,7 @@
 					],
 					"storeSettings": {
 						"type": "AzureBlobStorageReadSettings",
+						"recursive": true,
 						"enablePartitionDiscovery": false
 					},
 					"formatSettings": {
@@ -175,13 +176,7 @@
 										"inputs": [
 											{
 												"referenceName": "inputdatsetforblob",
-												"type": "DatasetReference",
-												"parameters": {
-													"filename": {
-														"value": "@item().name",
-														"type": "Expression"
-													}
-												}
+												"type": "DatasetReference"
 											}
 										],
 										"outputs": [

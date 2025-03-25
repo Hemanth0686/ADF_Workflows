@@ -1,17 +1,16 @@
 {
-	"name": "inputdatsetforblob",
+	"name": "textdatadataset",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "AzureBlobStorage",
+			"referenceName": "ADLSGen2_LS",
 			"type": "LinkedServiceReference"
 		},
 		"annotations": [],
 		"type": "DelimitedText",
 		"typeProperties": {
 			"location": {
-				"type": "AzureBlobStorageLocation",
-				"fileName": "comparison.csv",
-				"container": "source"
+				"type": "AzureBlobFSLocation",
+				"fileSystem": "output"
 			},
 			"columnDelimiter": ",",
 			"escapeChar": "\\",
