@@ -1,0 +1,47 @@
+{
+	"name": "webhookpipeline",
+	"properties": {
+		"activities": [
+			{
+				"name": "createemployee",
+				"type": "WebHook",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://dummy.restapiexample.com/api/v1/create",
+					"method": "POST",
+					"headers": {
+						"content-type": "application\\json"
+					},
+					"body": {
+						"name": "John Doe",
+						"salary": "50000",
+						"age": "30"
+					},
+					"timeout": "00:10:00"
+				}
+			},
+			{
+				"name": "Wait",
+				"type": "Wait",
+				"dependsOn": [
+					{
+						"activity": "createemployee",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"waitTimeInSeconds": 10
+				}
+			}
+		],
+		"annotations": []
+	}
+}
