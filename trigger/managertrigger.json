@@ -1,0 +1,24 @@
+{
+	"name": "managertrigger",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "managerpipeline",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Minute",
+				"interval": 10,
+				"startTime": "2025-03-28T10:44:00",
+				"timeZone": "India Standard Time"
+			}
+		}
+	}
+}
