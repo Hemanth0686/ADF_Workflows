@@ -20,6 +20,7 @@
 						"storeSettings": {
 							"type": "AzureBlobStorageReadSettings",
 							"recursive": true,
+							"wildcardFileName": "*.csv",
 							"enablePartitionDiscovery": false
 						},
 						"formatSettings": {
@@ -34,7 +35,7 @@
 						"formatSettings": {
 							"type": "DelimitedTextWriteSettings",
 							"quoteAllText": true,
-							"fileExtension": ".txt"
+							"fileExtension": ".csv"
 						}
 					},
 					"enableStaging": false,
@@ -88,13 +89,17 @@
 					"storeSettings": {
 						"type": "AzureBlobStorageReadSettings",
 						"recursive": true,
+						"wildcardFileName": {
+							"value": "@activity('Copy data1').output",
+							"type": "Expression"
+						},
 						"enablePartitionDiscovery": false
 					}
 				}
 			}
 		],
 		"parameters": {
-			"filename": {
+			"foldername": {
 				"type": "string"
 			}
 		},
