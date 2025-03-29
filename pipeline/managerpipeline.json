@@ -92,7 +92,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"filename": {
-								"value": "@pipeline().parameters.foldername",
+								"value": "@activity('Copy data1').output",
 								"type": "Expression"
 							}
 						}
@@ -101,10 +101,6 @@
 					"storeSettings": {
 						"type": "AzureBlobStorageReadSettings",
 						"recursive": true,
-						"wildcardFileName": {
-							"value": "@{activity('Copy data1').output}",
-							"type": "Expression"
-						},
 						"enablePartitionDiscovery": false
 					}
 				}
