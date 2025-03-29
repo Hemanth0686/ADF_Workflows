@@ -13,7 +13,12 @@
 					"secureOutput": false,
 					"secureInput": false
 				},
-				"userProperties": [],
+				"userProperties": [
+					{
+						"name": "CSV files",
+						"value": "landed csv files copied to destination and deleted at source automatically."
+					}
+				],
 				"typeProperties": {
 					"source": {
 						"type": "DelimitedTextSource",
@@ -85,7 +90,12 @@
 					"secureOutput": false,
 					"secureInput": false
 				},
-				"userProperties": [],
+				"userProperties": [
+					{
+						"name": "Deleted",
+						"value": "Successfully deleted the file at source after copying."
+					}
+				],
 				"typeProperties": {
 					"dataset": {
 						"referenceName": "inputdatsetforblob",
