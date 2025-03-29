@@ -24,6 +24,7 @@
 					],
 					"storeSettings": {
 						"type": "AzureBlobStorageReadSettings",
+						"recursive": true,
 						"enablePartitionDiscovery": false
 					},
 					"formatSettings": {
@@ -79,6 +80,7 @@
 												"storeSettings": {
 													"type": "AzureBlobStorageReadSettings",
 													"recursive": true,
+													"wildcardFileName": "*.txt",
 													"enablePartitionDiscovery": false
 												},
 												"formatSettings": {
@@ -108,14 +110,8 @@
 										},
 										"inputs": [
 											{
-												"referenceName": "inputdatsetforblob",
-												"type": "DatasetReference",
-												"parameters": {
-													"filename": {
-														"value": "@item().Name",
-														"type": "Expression"
-													}
-												}
+												"referenceName": "sourcedatasetforblob",
+												"type": "DatasetReference"
 											}
 										],
 										"outputs": [
@@ -145,6 +141,7 @@
 												"storeSettings": {
 													"type": "AzureBlobStorageReadSettings",
 													"recursive": true,
+													"wildcardFileName": "*.csv",
 													"enablePartitionDiscovery": false
 												},
 												"formatSettings": {
@@ -174,14 +171,8 @@
 										},
 										"inputs": [
 											{
-												"referenceName": "inputdatsetforblob",
-												"type": "DatasetReference",
-												"parameters": {
-													"filename": {
-														"value": "@item().name",
-														"type": "Expression"
-													}
-												}
+												"referenceName": "sourcedatasetforblob",
+												"type": "DatasetReference"
 											}
 										],
 										"outputs": [
