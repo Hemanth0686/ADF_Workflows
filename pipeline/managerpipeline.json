@@ -50,8 +50,14 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "sourcedatasetforblob",
-						"type": "DatasetReference"
+						"referenceName": "inputdatsetforblob",
+						"type": "DatasetReference",
+						"parameters": {
+							"filename": {
+								"value": "@pipeline().parameters.foldername",
+								"type": "Expression"
+							}
+						}
 					}
 				],
 				"outputs": [
@@ -82,15 +88,21 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataset": {
-						"referenceName": "sourcedatasetforblob",
-						"type": "DatasetReference"
+						"referenceName": "inputdatsetforblob",
+						"type": "DatasetReference",
+						"parameters": {
+							"filename": {
+								"value": "@pipeline().parameters.foldername",
+								"type": "Expression"
+							}
+						}
 					},
 					"enableLogging": false,
 					"storeSettings": {
 						"type": "AzureBlobStorageReadSettings",
 						"recursive": true,
 						"wildcardFileName": {
-							"value": "@activity('Copy data1').output",
+							"value": "@{activity('Copy data1').output}",
 							"type": "Expression"
 						},
 						"enablePartitionDiscovery": false
