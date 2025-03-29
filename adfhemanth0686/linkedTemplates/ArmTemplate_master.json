@@ -19,6 +19,10 @@
 			"type": "string",
 			"defaultValue": "https://storagehemanth0011.dfs.core.windows.net/"
 		},
+		"managertrigger_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/39e0b54b-fda8-41ac-a2ea-6e64de374306/resourceGroups/Hemanth/providers/Microsoft.Storage/storageAccounts/hemanthblobstorage"
+		},
 		"containerUri": {
 			"type": "string",
 			"metadata": "URI to storage account containing linked ARM templates"
@@ -72,6 +76,9 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
+					},
+					"managertrigger_properties_typeProperties_scope": {
+						"value": "[parameters('managertrigger_properties_typeProperties_scope')]"
 					}
 				}
 			},
