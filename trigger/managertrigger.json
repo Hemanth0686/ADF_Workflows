@@ -13,12 +13,13 @@
 		],
 		"type": "BlobEventsTrigger",
 		"typeProperties": {
-			"blobPathBeginsWith": "/input/blobs/",
+			"blobPathBeginsWith": "/input/blobs/input/",
 			"blobPathEndsWith": ".csv",
 			"ignoreEmptyBlobs": true,
 			"scope": "/subscriptions/39e0b54b-fda8-41ac-a2ea-6e64de374306/resourceGroups/Hemanth/providers/Microsoft.Storage/storageAccounts/hemanthblobstorage",
 			"events": [
-				"Microsoft.Storage.BlobCreated"
+				"Microsoft.Storage.BlobCreated",
+				"Microsoft.Storage.BlobDeleted"
 			]
 		}
 	}

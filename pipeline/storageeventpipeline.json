@@ -89,10 +89,6 @@
 					"storeSettings": {
 						"type": "AzureBlobStorageReadSettings",
 						"recursive": true,
-						"wildcardFileName": {
-							"value": "@activity('Copy data1').output",
-							"type": "Expression"
-						},
 						"enablePartitionDiscovery": false
 					}
 				}
