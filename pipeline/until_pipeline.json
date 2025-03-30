@@ -3,7 +3,8 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Until1",
+				"name": "Untiltrue",
+				"description": "Until fileexists true the it is going to run.",
 				"type": "Until",
 				"dependsOn": [],
 				"userProperties": [],
