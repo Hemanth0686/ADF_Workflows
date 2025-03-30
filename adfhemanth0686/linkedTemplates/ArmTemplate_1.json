@@ -7,9 +7,9 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "adfhemanth0686"
 		},
-		"managertrigger_properties_typeProperties_scope": {
+		"Storageevent_trigger_properties_typeProperties_scope": {
 			"type": "string",
-			"defaultValue": "/subscriptions/39e0b54b-fda8-41ac-a2ea-6e64de374306/resourceGroups/Hemanth/providers/Microsoft.Storage/storageAccounts/hemanthblobstorage"
+			"defaultValue": "/subscriptions/39e0b54b-fda8-41ac-a2ea-6e64de374306/resourceGroups/Hemanth/providers/Microsoft.Storage/storageAccounts/storagehemanth0011"
 		}
 	},
 	"variables": {
@@ -689,7 +689,7 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/managerpipeline')]",
+			"name": "[concat(parameters('factoryName'), '/storageevent _pl')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -705,18 +705,14 @@
 							"secureOutput": false,
 							"secureInput": false
 						},
-						"userProperties": [
-							{
-								"name": "CSV files",
-								"value": "landed csv files copied to destination and deleted at source automatically."
-							}
-						],
+						"userProperties": [],
 						"typeProperties": {
 							"source": {
 								"type": "DelimitedTextSource",
 								"storeSettings": {
-									"type": "AzureBlobStorageReadSettings",
+									"type": "AzureBlobFSReadSettings",
 									"recursive": true,
+									"wildcardFolderPath": "csvfiles",
 									"wildcardFileName": "*.csv",
 									"enablePartitionDiscovery": false
 								},
@@ -727,12 +723,12 @@
 							"sink": {
 								"type": "DelimitedTextSink",
 								"storeSettings": {
-									"type": "AzureBlobStorageWriteSettings"
+									"type": "AzureBlobFSWriteSettings"
 								},
 								"formatSettings": {
 									"type": "DelimitedTextWriteSettings",
 									"quoteAllText": true,
-									"fileExtension": ".csv"
+									"fileExtension": ".txt"
 								}
 							},
 							"enableStaging": false,
@@ -747,19 +743,14 @@
 						},
 						"inputs": [
 							{
-								"referenceName": "inputdatsetforblob",
+								"referenceName": "inputADLSgen2_dataset",
 								"type": "DatasetReference",
-								"parameters": {
-									"filename": {
-										"value": "@pipeline().parameters.foldername",
-										"type": "Expression"
-									}
-								}
+								"parameters": {}
 							}
 						],
 						"outputs": [
 							{
-								"referenceName": "outputblobdatadataset",
+								"referenceName": "OutputADLSgen2_dataset",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -783,26 +774,16 @@
 							"secureOutput": false,
 							"secureInput": false
 						},
-						"userProperties": [
-							{
-								"name": "Deleted",
-								"value": "Successfully deleted the file at source after copying."
-							}
-						],
+						"userProperties": [],
 						"typeProperties": {
 							"dataset": {
-								"referenceName": "inputdatsetforblob",
+								"referenceName": "inputADLSgen2_dataset",
 								"type": "DatasetReference",
-								"parameters": {
-									"filename": {
-										"value": "@activity('Copy data1').output",
-										"type": "Expression"
-									}
-								}
+								"parameters": {}
 							},
 							"enableLogging": false,
 							"storeSettings": {
-								"type": "AzureBlobStorageReadSettings",
+								"type": "AzureBlobFSReadSettings",
 								"recursive": true,
 								"enablePartitionDiscovery": false
 							}
@@ -812,17 +793,12 @@
 				"policy": {
 					"elapsedTimeMetric": {}
 				},
-				"parameters": {
-					"foldername": {
-						"type": "string"
-					}
-				},
 				"annotations": []
 			},
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/managertrigger')]",
+			"name": "[concat(parameters('factoryName'), '/Storageevent_trigger')]",
 			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -831,7 +807,7 @@
 				"pipelines": [
 					{
 						"pipelineReference": {
-							"referenceName": "managerpipeline",
+							"referenceName": "storageevent _pl",
 							"type": "PipelineReference"
 						},
 						"parameters": {}
@@ -839,16 +815,17 @@
 				],
 				"type": "BlobEventsTrigger",
 				"typeProperties": {
-					"blobPathBeginsWith": "/input/blobs/education.csv",
+					"blobPathBeginsWith": "/input/blobs/csvfiles/comparison.csv",
+					"blobPathEndsWith": ".csv",
 					"ignoreEmptyBlobs": true,
-					"scope": "[parameters('managertrigger_properties_typeProperties_scope')]",
+					"scope": "[parameters('Storageevent_trigger_properties_typeProperties_scope')]",
 					"events": [
 						"Microsoft.Storage.BlobCreated"
 					]
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/managerpipeline')]"
+				"[concat(variables('factoryId'), '/pipelines/storageevent _pl')]"
 			]
 		}
 	]

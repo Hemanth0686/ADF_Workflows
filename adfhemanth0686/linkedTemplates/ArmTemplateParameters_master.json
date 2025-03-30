@@ -14,8 +14,8 @@
 		"ADLSGen2_LS_properties_typeProperties_url": {
 			"value": "https://storagehemanth0011.dfs.core.windows.net/"
 		},
-		"managertrigger_properties_typeProperties_scope": {
-			"value": "/subscriptions/39e0b54b-fda8-41ac-a2ea-6e64de374306/resourceGroups/Hemanth/providers/Microsoft.Storage/storageAccounts/hemanthblobstorage"
+		"Storageevent_trigger_properties_typeProperties_scope": {
+			"value": "/subscriptions/39e0b54b-fda8-41ac-a2ea-6e64de374306/resourceGroups/Hemanth/providers/Microsoft.Storage/storageAccounts/storagehemanth0011"
 		},
 		"containerUri": {
 			"value": ""
