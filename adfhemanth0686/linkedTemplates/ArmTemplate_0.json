@@ -600,6 +600,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobStorageLocation",
+						"fileName": "comparison.csv",
 						"container": "source"
 					},
 					"columnDelimiter": ",",
