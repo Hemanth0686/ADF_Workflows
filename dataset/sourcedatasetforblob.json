@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "education.csv",
+				"fileName": "comparison.csv",
 				"container": "source"
 			},
 			"columnDelimiter": ",",
