@@ -1,5 +1,5 @@
 {
-	"name": "pipeline1",
+	"name": "filter_pipeline",
 	"properties": {
 		"activities": [
 			{
@@ -16,18 +16,42 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataset": {
-						"referenceName": "metadatadataset",
+						"referenceName": "filterinputblobdataset",
 						"type": "DatasetReference"
 					},
 					"fieldList": [
 						"childItems"
 					],
 					"storeSettings": {
-						"type": "AzureBlobFSReadSettings",
+						"type": "AzureBlobStorageReadSettings",
 						"enablePartitionDiscovery": false
 					},
 					"formatSettings": {
 						"type": "DelimitedTextReadSettings"
+					}
+				}
+			},
+			{
+				"name": "Filter_a_file",
+				"description": "Extracting a specified file.",
+				"type": "Filter",
+				"dependsOn": [
+					{
+						"activity": "Get Metadata1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Get Metadata1').output.childItems",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@contains(item().name,'comparison.csv')",
+						"type": "Expression"
 					}
 				}
 			}
