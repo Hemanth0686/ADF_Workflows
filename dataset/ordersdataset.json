@@ -20,55 +20,19 @@
 		},
 		"schema": [
 			{
-				"name": "Scheme Name",
+				"name": "OrderID",
 				"type": "String"
 			},
 			{
-				"name": "Category",
+				"name": "CustomerID",
 				"type": "String"
 			},
 			{
-				"name": "Min Investment (₹)",
+				"name": "Product",
 				"type": "String"
 			},
 			{
-				"name": "Risk Level",
-				"type": "String"
-			},
-			{
-				"name": "1Y Returns (%)",
-				"type": "String"
-			},
-			{
-				"name": "3Y Returns (%)",
-				"type": "String"
-			},
-			{
-				"name": "5Y Returns (%)",
-				"type": "String"
-			},
-			{
-				"name": "Expense Ratio (%)",
-				"type": "String"
-			},
-			{
-				"name": "AUM (Cr)",
-				"type": "String"
-			},
-			{
-				"name": "Investment Type",
-				"type": "String"
-			},
-			{
-				"name": "Scheme Type",
-				"type": "String"
-			},
-			{
-				"name": "ISIN",
-				"type": "String"
-			},
-			{
-				"name": "SIP Available",
+				"name": "Amount",
 				"type": "String"
 			}
 		]
