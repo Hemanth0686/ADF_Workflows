@@ -1,0 +1,74 @@
+{
+	"name": "dataflow1",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "customersdataset",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				},
+				{
+					"dataset": {
+						"referenceName": "ordersdataset",
+						"type": "DatasetReference"
+					},
+					"name": "source2"
+				}
+			],
+			"sinks": [],
+			"transformations": [
+				{
+					"name": "join1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          Fund as string,",
+				"          {Fund Manager} as string,",
+				"          Category as string,",
+				"          {2015} as string,",
+				"          {2016} as string,",
+				"          {2017} as string,",
+				"          {2018} as string,",
+				"          {2019} as string,",
+				"          {2020} as string,",
+				"          {2021} as string,",
+				"          {2022} as string,",
+				"          {2023} as string,",
+				"          {2024} as string,",
+				"          classification as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source1",
+				"source(output(",
+				"          {Scheme Name} as string,",
+				"          Category as string,",
+				"          {Min Investment (₹)} as string,",
+				"          {Risk Level} as string,",
+				"          {1Y Returns (%)} as string,",
+				"          {3Y Returns (%)} as string,",
+				"          {5Y Returns (%)} as string,",
+				"          {Expense Ratio (%)} as string,",
+				"          {AUM (Cr)} as string,",
+				"          {Investment Type} as string,",
+				"          {Scheme Type} as string,",
+				"          ISIN as string,",
+				"          {SIP Available} as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source2",
+				"source1, source2 join(ERROR_FUNCTION('') == ERROR_FUNCTION(''),",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1"
+			]
+		}
+	}
+}

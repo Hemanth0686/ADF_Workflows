@@ -1,0 +1,76 @@
+{
+	"name": "ordersdataset",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "orders.csv",
+				"container": "input"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "Scheme Name",
+				"type": "String"
+			},
+			{
+				"name": "Category",
+				"type": "String"
+			},
+			{
+				"name": "Min Investment (₹)",
+				"type": "String"
+			},
+			{
+				"name": "Risk Level",
+				"type": "String"
+			},
+			{
+				"name": "1Y Returns (%)",
+				"type": "String"
+			},
+			{
+				"name": "3Y Returns (%)",
+				"type": "String"
+			},
+			{
+				"name": "5Y Returns (%)",
+				"type": "String"
+			},
+			{
+				"name": "Expense Ratio (%)",
+				"type": "String"
+			},
+			{
+				"name": "AUM (Cr)",
+				"type": "String"
+			},
+			{
+				"name": "Investment Type",
+				"type": "String"
+			},
+			{
+				"name": "Scheme Type",
+				"type": "String"
+			},
+			{
+				"name": "ISIN",
+				"type": "String"
+			},
+			{
+				"name": "SIP Available",
+				"type": "String"
+			}
+		]
+	}
+}
