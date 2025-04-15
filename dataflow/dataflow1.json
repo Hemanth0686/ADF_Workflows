@@ -6,34 +6,37 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "customersdataset",
-						"type": "DatasetReference"
-					},
-					"name": "source1"
-				},
-				{
-					"dataset": {
 						"referenceName": "ordersdataset",
 						"type": "DatasetReference"
 					},
-					"name": "source2"
+					"name": "orders"
+				},
+				{
+					"dataset": {
+						"referenceName": "customersdataset",
+						"type": "DatasetReference"
+					},
+					"name": "customers"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "customersoutputdataset",
+						"type": "DatasetReference"
+					},
+					"name": "sinkcustomers"
+				}
+			],
 			"transformations": [
 				{
-					"name": "join1"
+					"name": "select1"
+				},
+				{
+					"name": "joinCustomersOrders"
 				}
 			],
 			"scriptLines": [
-				"source(output(",
-				"          CustomerID as string,",
-				"          Name as string,",
-				"          Country as string",
-				"     ),",
-				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> source1",
 				"source(output(",
 				"          OrderID as string,",
 				"          CustomerID as string,",
@@ -42,12 +45,40 @@
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> source2",
-				"source1, source2 join(ERROR_FUNCTION('') == ERROR_FUNCTION(''),",
+				"     ignoreNoFilesFound: false) ~> orders",
+				"source(output(",
+				"          CustomerID as string,",
+				"          Name as string,",
+				"          Country as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> customers",
+				"joinCustomersOrders select(mapColumn(",
+				"          Name,",
+				"          Country,",
+				"          Product,",
+				"          Amount",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"customers, orders join(customers@CustomerID == orders@CustomerID,",
 				"     joinType:'inner',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
-				"     broadcast: 'auto')~> join1"
+				"     broadcast: 'auto')~> joinCustomersOrders",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['customers.csv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     mapColumn(",
+				"          {customer Name} = Name,",
+				"          Country,",
+				"          Product,",
+				"          Amount",
+				"     ),",
+				"     partitionBy('hash', 1)) ~> sinkcustomers"
 			]
 		}
 	}
