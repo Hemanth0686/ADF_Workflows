@@ -1,0 +1,80 @@
+{
+	"name": "MF1_dataset",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "Annually Mutual Fund Returns.csv",
+				"container": "input"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "Fund",
+				"type": "String"
+			},
+			{
+				"name": "Fund Manager",
+				"type": "String"
+			},
+			{
+				"name": "Category",
+				"type": "String"
+			},
+			{
+				"name": "2015",
+				"type": "String"
+			},
+			{
+				"name": "2016",
+				"type": "String"
+			},
+			{
+				"name": "2017",
+				"type": "String"
+			},
+			{
+				"name": "2018",
+				"type": "String"
+			},
+			{
+				"name": "2019",
+				"type": "String"
+			},
+			{
+				"name": "2020",
+				"type": "String"
+			},
+			{
+				"name": "2021",
+				"type": "String"
+			},
+			{
+				"name": "2022",
+				"type": "String"
+			},
+			{
+				"name": "2023",
+				"type": "String"
+			},
+			{
+				"name": "2024",
+				"type": "String"
+			},
+			{
+				"name": "classification",
+				"type": "String"
+			}
+		]
+	}
+}
