@@ -9,7 +9,7 @@
 						"referenceName": "MF1_dataset",
 						"type": "DatasetReference"
 					},
-					"name": "source1"
+					"name": "Mutualfunddata"
 				}
 			],
 			"sinks": [
@@ -49,8 +49,8 @@
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> source1",
-				"source1 aggregate(groupBy(Category),",
+				"     ignoreNoFilesFound: false) ~> Mutualfunddata",
+				"Mutualfunddata aggregate(groupBy(Category),",
 				"     category_wise = count(Fund)) ~> aggregate1",
 				"aggregate1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
