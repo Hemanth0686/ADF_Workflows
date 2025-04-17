@@ -29,6 +29,54 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/ConditionalSplit_pl')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Conditional_DF",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "Conditional_DF",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"Mutualfunddata": {},
+									"EquitySink": {},
+									"sink1": {},
+									"Hybridsink": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/Conditional_DF')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/Dataflow_pl')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -1304,6 +1352,90 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/Debt_MF_dataset')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"folderPath": "TypesofMF's",
+						"container": "output"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Equity_MF_datset')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"folderPath": "TypesofMF's",
+						"container": "output"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Hybrid_MF_dataset')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"folderPath": "TypesofMF's",
+						"container": "output"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/MF1_dataset')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -2157,6 +2289,119 @@
 				"[concat(variables('factoryId'), '/datasets/MF1_dataset')]",
 				"[concat(variables('factoryId'), '/datasets/MFCategory_count')]",
 				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Conditional_DF')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "MF1_dataset",
+								"type": "DatasetReference"
+							},
+							"name": "Mutualfunddata"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "Equity_MF_datset",
+								"type": "DatasetReference"
+							},
+							"name": "EquitySink"
+						},
+						{
+							"dataset": {
+								"referenceName": "Debt_MF_dataset",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						},
+						{
+							"dataset": {
+								"referenceName": "Hybrid_MF_dataset",
+								"type": "DatasetReference"
+							},
+							"name": "Hybridsink"
+						}
+					],
+					"transformations": [
+						{
+							"name": "split1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          Fund as string,",
+						"          {Fund Manager} as string,",
+						"          Category as string,",
+						"          {2015} as string,",
+						"          {2016} as string,",
+						"          {2017} as string,",
+						"          {2018} as string,",
+						"          {2019} as string,",
+						"          {2020} as string,",
+						"          {2021} as string,",
+						"          {2022} as string,",
+						"          {2023} as string,",
+						"          {2024} as string,",
+						"          classification as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> Mutualfunddata",
+						"Mutualfunddata split(startsWith(classification, 'Equity'),",
+						"     startsWith(classification, 'Debt'),",
+						"     disjoint: false) ~> split1@(EquityMF, DebtMF, HybridMF)",
+						"split1@EquityMF sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['Equityfunds.csv'],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     mapColumn(",
+						"          {Fund Name} = Fund,",
+						"          {Fund Manager},",
+						"          Category,",
+						"          {Equity type} = classification",
+						"     ),",
+						"     partitionBy('hash', 1)) ~> EquitySink",
+						"split1@DebtMF sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['DebtMF.csv'],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     mapColumn(",
+						"          {Fund Name} = Fund,",
+						"          {Fund Manager},",
+						"          Category,",
+						"          {Debt Type} = classification",
+						"     ),",
+						"     partitionBy('hash', 1)) ~> sink1",
+						"split1@HybridMF sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['Hybrid&otherMF.csv'],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     mapColumn(",
+						"          {Fund Name} = Fund,",
+						"          {Fund Manager},",
+						"          Category,",
+						"          {Hybrid&other Types} = classification",
+						"     ),",
+						"     partitionBy('hash', 1)) ~> Hybridsink"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/MF1_dataset')]",
+				"[concat(variables('factoryId'), '/datasets/Equity_MF_datset')]",
+				"[concat(variables('factoryId'), '/datasets/Debt_MF_dataset')]",
+				"[concat(variables('factoryId'), '/datasets/Hybrid_MF_dataset')]"
 			]
 		},
 		{
