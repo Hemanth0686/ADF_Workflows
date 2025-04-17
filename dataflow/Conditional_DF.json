@@ -1,0 +1,105 @@
+{
+	"name": "Conditional_DF",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "MF1_dataset",
+						"type": "DatasetReference"
+					},
+					"name": "Mutualfunddata"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "Equity_MF_datset",
+						"type": "DatasetReference"
+					},
+					"name": "EquitySink"
+				},
+				{
+					"dataset": {
+						"referenceName": "Debt_MF_dataset",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				},
+				{
+					"dataset": {
+						"referenceName": "Hybrid_MF_dataset",
+						"type": "DatasetReference"
+					},
+					"name": "Hybridsink"
+				}
+			],
+			"transformations": [
+				{
+					"name": "split1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          Fund as string,",
+				"          {Fund Manager} as string,",
+				"          Category as string,",
+				"          {2015} as string,",
+				"          {2016} as string,",
+				"          {2017} as string,",
+				"          {2018} as string,",
+				"          {2019} as string,",
+				"          {2020} as string,",
+				"          {2021} as string,",
+				"          {2022} as string,",
+				"          {2023} as string,",
+				"          {2024} as string,",
+				"          classification as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> Mutualfunddata",
+				"Mutualfunddata split(startsWith(classification, 'Equity'),",
+				"     startsWith(classification, 'Debt'),",
+				"     disjoint: false) ~> split1@(EquityMF, DebtMF, HybridMF)",
+				"split1@EquityMF sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['Equityfunds.csv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     mapColumn(",
+				"          {Fund Name} = Fund,",
+				"          {Fund Manager},",
+				"          Category,",
+				"          {Equity type} = classification",
+				"     ),",
+				"     partitionBy('hash', 1)) ~> EquitySink",
+				"split1@DebtMF sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['DebtMF.csv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     mapColumn(",
+				"          {Fund Name} = Fund,",
+				"          {Fund Manager},",
+				"          Category,",
+				"          {Debt Type} = classification",
+				"     ),",
+				"     partitionBy('hash', 1)) ~> sink1",
+				"split1@HybridMF sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['Hybrid&otherMF.csv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     mapColumn(",
+				"          {Fund Name} = Fund,",
+				"          {Fund Manager},",
+				"          Category,",
+				"          {Hybrid&other Types} = classification",
+				"     ),",
+				"     partitionBy('hash', 1)) ~> Hybridsink"
+			]
+		}
+	}
+}
