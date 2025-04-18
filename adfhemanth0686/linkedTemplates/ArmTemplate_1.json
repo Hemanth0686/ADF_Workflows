@@ -13,6 +13,32 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/inputADLSgen2_dataset')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ADLSGen2_LS",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "csvfiles",
+						"fileSystem": "input"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/inputdataDataset')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -132,6 +158,31 @@
 						"type": "AzureBlobFSLocation",
 						"fileName": "education.csv",
 						"folderPath": "csvfiles",
+						"fileSystem": "output"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/performance2024MF')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ADLSGen2_LS",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
 						"fileSystem": "output"
 					},
 					"columnDelimiter": ",",
@@ -1166,7 +1217,9 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/inputADLSgen2_dataset')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/until_pipeline')]",
@@ -1287,185 +1340,6 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/sourcedatasetforblob')]"
 			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Aggregatedataflow')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "MF1_dataset",
-								"type": "DatasetReference"
-							},
-							"name": "Mutualfunddata"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "MFCategory_count",
-								"type": "DatasetReference"
-							},
-							"name": "sink1",
-							"rejectedDataLinkedService": {
-								"referenceName": "AzureBlobStorage",
-								"type": "LinkedServiceReference"
-							}
-						}
-					],
-					"transformations": [
-						{
-							"name": "aggregate1"
-						}
-					],
-					"scriptLines": [
-						"source(output(",
-						"          Fund as string,",
-						"          {Fund Manager} as string,",
-						"          Category as string,",
-						"          {2015} as string,",
-						"          {2016} as string,",
-						"          {2017} as string,",
-						"          {2018} as string,",
-						"          {2019} as string,",
-						"          {2020} as string,",
-						"          {2021} as string,",
-						"          {2022} as string,",
-						"          {2023} as string,",
-						"          {2024} as string,",
-						"          classification as string",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false) ~> Mutualfunddata",
-						"Mutualfunddata aggregate(groupBy(Category),",
-						"     category_wise = count(Fund)) ~> aggregate1",
-						"aggregate1 sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     partitionFileNames:['MF category_wise_count.csv'],",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     mapColumn(",
-						"          {Category Name} = Category,",
-						"          {Category Count} = category_wise",
-						"     ),",
-						"     partitionBy('hash', 1)) ~> sink1"
-					]
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Conditional_DF')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "MF1_dataset",
-								"type": "DatasetReference"
-							},
-							"name": "Mutualfunddata"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "Equity_MF_datset",
-								"type": "DatasetReference"
-							},
-							"name": "EquitySink"
-						},
-						{
-							"dataset": {
-								"referenceName": "Debt_MF_dataset",
-								"type": "DatasetReference"
-							},
-							"name": "sink1"
-						},
-						{
-							"dataset": {
-								"referenceName": "Hybrid_MF_dataset",
-								"type": "DatasetReference"
-							},
-							"name": "Hybridsink"
-						}
-					],
-					"transformations": [
-						{
-							"name": "split1"
-						}
-					],
-					"scriptLines": [
-						"source(output(",
-						"          Fund as string,",
-						"          {Fund Manager} as string,",
-						"          Category as string,",
-						"          {2015} as string,",
-						"          {2016} as string,",
-						"          {2017} as string,",
-						"          {2018} as string,",
-						"          {2019} as string,",
-						"          {2020} as string,",
-						"          {2021} as string,",
-						"          {2022} as string,",
-						"          {2023} as string,",
-						"          {2024} as string,",
-						"          classification as string",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false) ~> Mutualfunddata",
-						"Mutualfunddata split(startsWith(classification, 'Equity'),",
-						"     startsWith(classification, 'Debt'),",
-						"     disjoint: false) ~> split1@(EquityMF, DebtMF, HybridMF)",
-						"split1@EquityMF sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     partitionFileNames:['Equityfunds.csv'],",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     mapColumn(",
-						"          {Fund Name} = Fund,",
-						"          {Fund Manager},",
-						"          Category,",
-						"          {Equity type} = classification",
-						"     ),",
-						"     partitionBy('hash', 1)) ~> EquitySink",
-						"split1@DebtMF sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     partitionFileNames:['DebtMF.csv'],",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     mapColumn(",
-						"          {Fund Name} = Fund,",
-						"          {Fund Manager},",
-						"          Category,",
-						"          {Debt Type} = classification",
-						"     ),",
-						"     partitionBy('hash', 1)) ~> sink1",
-						"split1@HybridMF sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     partitionFileNames:['Hybrid&otherMF.csv'],",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     mapColumn(",
-						"          {Fund Name} = Fund,",
-						"          {Fund Manager},",
-						"          Category,",
-						"          {Hybrid&other Types} = classification",
-						"     ),",
-						"     partitionBy('hash', 1)) ~> Hybridsink"
-					]
-				}
-			},
-			"dependsOn": []
 		}
 	]
 }
