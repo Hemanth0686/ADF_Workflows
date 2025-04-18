@@ -9,7 +9,7 @@
 						"referenceName": "Mutualfunddataset",
 						"type": "DatasetReference"
 					},
-					"name": "source1"
+					"name": "Mutualfunddata"
 				}
 			],
 			"sinks": [
@@ -18,12 +18,12 @@
 						"referenceName": "performance2024MF",
 						"type": "DatasetReference"
 					},
-					"name": "sink1"
+					"name": "performancedata"
 				}
 			],
 			"transformations": [
 				{
-					"name": "derivedColumn1"
+					"name": "Performanceof2024column"
 				}
 			],
 			"scriptLines": [
@@ -45,10 +45,10 @@
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> source1",
-				"source1 derive({performance 2024} = iif(toInteger({2024}) > 7, 'good', 'average')\r",
-				") ~> derivedColumn1",
-				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"     ignoreNoFilesFound: false) ~> Mutualfunddata",
+				"Mutualfunddata derive({performance 2024} = iif(toInteger({2024}) > 7, 'good', 'average')\r",
+				") ~> Performanceof2024column",
+				"Performanceof2024column sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     partitionFileNames:['2024_MF_performace.csv'],",
 				"     umask: 0022,",
@@ -64,7 +64,7 @@
 				"          classification,",
 				"          {performance 2024}",
 				"     ),",
-				"     partitionBy('hash', 1)) ~> sink1"
+				"     partitionBy('hash', 1)) ~> performancedata"
 			]
 		}
 	}
