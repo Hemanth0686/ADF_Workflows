@@ -1,0 +1,63 @@
+{
+	"name": "Exists_DF",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Mutualfunddataset",
+						"type": "DatasetReference"
+					},
+					"name": "Mutualfunddata"
+				},
+				{
+					"dataset": {
+						"referenceName": "Equityfunddataset",
+						"type": "DatasetReference"
+					},
+					"name": "EquityFunddata"
+				}
+			],
+			"sinks": [],
+			"transformations": [
+				{
+					"name": "exists"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          Fund as string,",
+				"          {Fund Manager} as string,",
+				"          Category as string,",
+				"          {2015} as string,",
+				"          {2016} as string,",
+				"          {2017} as string,",
+				"          {2018} as string,",
+				"          {2019} as string,",
+				"          {2020} as string,",
+				"          {2021} as string,",
+				"          {2022} as string,",
+				"          {2023} as string,",
+				"          {2024} as string,",
+				"          classification as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> Mutualfunddata",
+				"source(output(",
+				"          {Fund Name} as string,",
+				"          {Fund Manager} as string,",
+				"          Category as string,",
+				"          {Equity type} as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> EquityFunddata",
+				"Mutualfunddata, EquityFunddata exists(Mutualfunddata@Category == EquityFunddata@Category,",
+				"     negate:false,",
+				"     broadcast: 'auto')~> exists"
+			]
+		}
+	}
+}
