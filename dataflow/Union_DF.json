@@ -37,16 +37,16 @@
 			],
 			"transformations": [
 				{
-					"name": "select2"
+					"name": "Debtselect"
 				},
 				{
-					"name": "select3"
+					"name": "Equityselect"
 				},
 				{
-					"name": "select4"
+					"name": "Hybridselect"
 				},
 				{
-					"name": "union1"
+					"name": "Mfunion"
 				}
 			],
 			"scriptLines": [
@@ -84,7 +84,7 @@
 				"          {Category Name} = {Debt Type}",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> select2",
+				"     skipDuplicateMapOutputs: true) ~> Debtselect",
 				"EquityMFData select(mapColumn(",
 				"          {Fund Name},",
 				"          {Fund Manager},",
@@ -92,7 +92,7 @@
 				"          {Category Name} = {Equity type}",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> select3",
+				"     skipDuplicateMapOutputs: true) ~> Equityselect",
 				"HybridMFData select(mapColumn(",
 				"          {Fund Name},",
 				"          {Fund Manager},",
@@ -100,9 +100,9 @@
 				"          {Category Name} = {Hybrid&other Types}",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> select4",
-				"select3, select2, select4 union(byName: true)~> union1",
-				"union1 sink(allowSchemaDrift: true,",
+				"     skipDuplicateMapOutputs: true) ~> Hybridselect",
+				"Equityselect, Debtselect, Hybridselect union(byName: true)~> Mfunion",
+				"Mfunion sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     partitionFileNames:['Final Mutualfund data.csv'],",
 				"     umask: 0022,",
