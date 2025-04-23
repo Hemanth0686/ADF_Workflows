@@ -1,0 +1,41 @@
+{
+	"name": "EquityMF_ADLS2_dataset",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ADLSGen2_LS",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "EquityMF",
+				"folderPath": "TypesofMF",
+				"fileSystem": "mutualfunds"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "Fund Name",
+				"type": "String"
+			},
+			{
+				"name": "Fund Manager",
+				"type": "String"
+			},
+			{
+				"name": "Category",
+				"type": "String"
+			},
+			{
+				"name": "Equity type",
+				"type": "String"
+			}
+		]
+	}
+}
