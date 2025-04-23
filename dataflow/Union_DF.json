@@ -1,0 +1,123 @@
+{
+	"name": "Union_DF",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "EquityMF_ADLS2_dataset",
+						"type": "DatasetReference"
+					},
+					"name": "EquityMFData"
+				},
+				{
+					"dataset": {
+						"referenceName": "DebtMF_ADLS2_dataset",
+						"type": "DatasetReference"
+					},
+					"name": "DebtMFData"
+				},
+				{
+					"dataset": {
+						"referenceName": "HybridMF_ADLS2_dataset",
+						"type": "DatasetReference"
+					},
+					"name": "HybridMFData"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AllMFdata_final",
+						"type": "DatasetReference"
+					},
+					"name": "sinkMFdata"
+				}
+			],
+			"transformations": [
+				{
+					"name": "select2"
+				},
+				{
+					"name": "select3"
+				},
+				{
+					"name": "select4"
+				},
+				{
+					"name": "union1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          {Fund Name} as string,",
+				"          {Fund Manager} as string,",
+				"          Category as string,",
+				"          {Equity type} as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> EquityMFData",
+				"source(output(",
+				"          {Fund Name} as string,",
+				"          {Fund Manager} as string,",
+				"          Category as string,",
+				"          {Debt Type} as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DebtMFData",
+				"source(output(",
+				"          {Fund Name} as string,",
+				"          {Fund Manager} as string,",
+				"          Category as string,",
+				"          {Hybrid&other Types} as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> HybridMFData",
+				"DebtMFData select(mapColumn(",
+				"          {Fund Name},",
+				"          {Fund Manager},",
+				"          Category,",
+				"          {Category Name} = {Debt Type}",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select2",
+				"EquityMFData select(mapColumn(",
+				"          {Fund Name},",
+				"          {Fund Manager},",
+				"          Category,",
+				"          {Category Name} = {Equity type}",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select3",
+				"HybridMFData select(mapColumn(",
+				"          {Fund Name},",
+				"          {Fund Manager},",
+				"          Category,",
+				"          {Category Name} = {Hybrid&other Types}",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select4",
+				"select3, select2, select4 union(byName: true)~> union1",
+				"union1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['Final Mutualfund data.csv'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     mapColumn(",
+				"          {Fund Name},",
+				"          {Fund Manager},",
+				"          Category,",
+				"          {Category Name}",
+				"     ),",
+				"     partitionBy('hash', 1)) ~> sinkMFdata"
+			]
+		}
+	}
+}

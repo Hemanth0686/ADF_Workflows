@@ -19,7 +19,15 @@
 					"name": "EquityFunddata"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "Exists_output",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
 			"transformations": [
 				{
 					"name": "exists"
@@ -56,7 +64,13 @@
 				"     ignoreNoFilesFound: false) ~> EquityFunddata",
 				"Mutualfunddata, EquityFunddata exists(Mutualfunddata@Category == EquityFunddata@Category,",
 				"     negate:false,",
-				"     broadcast: 'auto')~> exists"
+				"     broadcast: 'auto')~> exists",
+				"exists sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['ExistsMF.csv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink1"
 			]
 		}
 	}
