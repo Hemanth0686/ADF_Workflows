@@ -6,16 +6,128 @@
 			"type": "string",
 			"metadata": "Data Factory name",
 			"defaultValue": "adfhemanth0686"
-		},
-		"Storageevent_trigger_properties_typeProperties_scope": {
-			"type": "string",
-			"defaultValue": "/subscriptions/39e0b54b-fda8-41ac-a2ea-6e64de374306/resourceGroups/Hemanth/providers/Microsoft.Storage/storageAccounts/storagehemanth0011"
 		}
 	},
 	"variables": {
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/copypipeline')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "sample copy activity copying files from source to destination.",
+				"activities": [
+					{
+						"name": "Copy data",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "sourcedatadatasetGen2",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "outputdataDataset",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Deletesourcefile",
+						"description": "On successful completion of copying the data from source to destination delete the source data file immediately.",
+						"type": "Delete",
+						"dependsOn": [
+							{
+								"activity": "Copy data",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "sourcedatadatasetGen2",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"logStorageSettings": {
+								"linkedServiceName": {
+									"referenceName": "ADLSGen2_LS",
+									"type": "LinkedServiceReference"
+								},
+								"path": "output"
+							},
+							"enableLogging": true,
+							"storeSettings": {
+								"type": "AzureBlobFSReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
 		{
 			"name": "[concat(parameters('factoryName'), '/fileprocessingswitchpipeline')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
@@ -1155,6 +1267,102 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/Lookup_DF')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "Mutualfunddataset",
+								"type": "DatasetReference"
+							},
+							"name": "AnnualyMFData"
+						},
+						{
+							"dataset": {
+								"referenceName": "Equityfunddataset",
+								"type": "DatasetReference"
+							},
+							"name": "EquityMFData"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "LookupEquitydataset",
+								"type": "DatasetReference"
+							},
+							"name": "sinkEquityFunds"
+						}
+					],
+					"transformations": [
+						{
+							"name": "lookupEquityfunds"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          Fund as string,",
+						"          {Fund Manager} as string,",
+						"          Category as string,",
+						"          {2015} as string,",
+						"          {2016} as string,",
+						"          {2017} as string,",
+						"          {2018} as string,",
+						"          {2019} as string,",
+						"          {2020} as string,",
+						"          {2021} as string,",
+						"          {2022} as string,",
+						"          {2023} as string,",
+						"          {2024} as string,",
+						"          classification as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> AnnualyMFData",
+						"source(output(",
+						"          {Fund Name} as string,",
+						"          {Fund Manager} as string,",
+						"          Category as string,",
+						"          {Equity type} as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> EquityMFData",
+						"AnnualyMFData, EquityMFData lookup(AnnualyMFData@Category == EquityMFData@Category,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> lookupEquityfunds",
+						"lookupEquityfunds sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['LookupEquityFunds.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     mapColumn(",
+						"          Fund,",
+						"          {Fund Manager} = AnnualyMFData@{Fund Manager},",
+						"          Category = AnnualyMFData@Category,",
+						"          {2021},",
+						"          {2022},",
+						"          {2023},",
+						"          {2024},",
+						"          classification,",
+						"          Category = EquityMFData@Category,",
+						"          {Equity type}",
+						"     ),",
+						"     partitionBy('hash', 1)) ~> sinkEquityFunds"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/Union_DF')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -1510,6 +1718,53 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/Lookup_DF_PL')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Lookup_DF",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "Lookup_DF",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"AnnualyMFData": {},
+									"EquityMFData": {},
+									"sinkEquityFunds": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/Lookup_DF')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/aggregate_pl')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -1601,37 +1856,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/Union_DF')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Storageevent_trigger')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Stopped",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "storageevent _pl",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					}
-				],
-				"type": "BlobEventsTrigger",
-				"typeProperties": {
-					"blobPathBeginsWith": "/input/blobs/csvfiles/comparison.csv",
-					"blobPathEndsWith": ".csv",
-					"ignoreEmptyBlobs": true,
-					"scope": "[parameters('Storageevent_trigger_properties_typeProperties_scope')]",
-					"events": [
-						"Microsoft.Storage.BlobCreated"
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/storageevent _pl')]"
 			]
 		}
 	]
