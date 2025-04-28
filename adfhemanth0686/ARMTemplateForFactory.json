@@ -265,6 +265,52 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/Surrogate_DF_PL')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Surrogate_DF",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "Surrogate_DF",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"MutualFundData": {},
+									"sinkData": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/Surrogate_DF')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/aggregate_pl')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -1740,6 +1786,33 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/Final_MF_Dataset_Sno')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "output"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/HybridMF_ADLS2_dataset')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -3179,6 +3252,95 @@
 				"[concat(variables('factoryId'), '/datasets/Mutualfunddataset')]",
 				"[concat(variables('factoryId'), '/datasets/Equityfunddataset')]",
 				"[concat(variables('factoryId'), '/datasets/LookupEquitydataset')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Surrogate_DF')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "Mutualfunddataset",
+								"type": "DatasetReference"
+							},
+							"name": "MutualFundData"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "Final_MF_Dataset_Sno",
+								"type": "DatasetReference"
+							},
+							"name": "sinkData"
+						}
+					],
+					"transformations": [
+						{
+							"name": "SurrogateSno"
+						},
+						{
+							"name": "select"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          Fund as string,",
+						"          {Fund Manager} as string,",
+						"          Category as string,",
+						"          {2015} as string,",
+						"          {2016} as string,",
+						"          {2017} as string,",
+						"          {2018} as string,",
+						"          {2019} as string,",
+						"          {2020} as string,",
+						"          {2021} as string,",
+						"          {2022} as string,",
+						"          {2023} as string,",
+						"          {2024} as string,",
+						"          classification as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> MutualFundData",
+						"MutualFundData keyGenerate(output({S.no} as long),",
+						"     startAt: 1L,",
+						"     stepValue: 1L) ~> SurrogateSno",
+						"SurrogateSno select(mapColumn(",
+						"          {S.no},",
+						"          Fund,",
+						"          {Fund Manager},",
+						"          Category,",
+						"          {2015},",
+						"          {2016},",
+						"          {2017},",
+						"          {2018},",
+						"          {2019},",
+						"          {2020},",
+						"          {2021},",
+						"          {2022},",
+						"          {2023},",
+						"          {2024},",
+						"          classification",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select",
+						"select sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['Added_Sno_MF_data.csv'],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> sinkData"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Mutualfunddataset')]",
+				"[concat(variables('factoryId'), '/datasets/Final_MF_Dataset_Sno')]"
 			]
 		},
 		{
