@@ -1,0 +1,83 @@
+{
+	"name": "Surrogate_DF",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Mutualfunddataset",
+						"type": "DatasetReference"
+					},
+					"name": "MutualFundData"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "Final_MF_Dataset_Sno",
+						"type": "DatasetReference"
+					},
+					"name": "sinkData"
+				}
+			],
+			"transformations": [
+				{
+					"name": "SurrogateSno"
+				},
+				{
+					"name": "select"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          Fund as string,",
+				"          {Fund Manager} as string,",
+				"          Category as string,",
+				"          {2015} as string,",
+				"          {2016} as string,",
+				"          {2017} as string,",
+				"          {2018} as string,",
+				"          {2019} as string,",
+				"          {2020} as string,",
+				"          {2021} as string,",
+				"          {2022} as string,",
+				"          {2023} as string,",
+				"          {2024} as string,",
+				"          classification as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> MutualFundData",
+				"MutualFundData keyGenerate(output({S.no} as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> SurrogateSno",
+				"SurrogateSno select(mapColumn(",
+				"          {S.no},",
+				"          Fund,",
+				"          {Fund Manager},",
+				"          Category,",
+				"          {2015},",
+				"          {2016},",
+				"          {2017},",
+				"          {2018},",
+				"          {2019},",
+				"          {2020},",
+				"          {2021},",
+				"          {2022},",
+				"          {2023},",
+				"          {2024},",
+				"          classification",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select",
+				"select sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['Added_Sno_MF_data.csv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sinkData"
+			]
+		}
+	}
+}
